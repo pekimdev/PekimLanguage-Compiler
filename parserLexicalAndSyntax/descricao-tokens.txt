@@ -1,0 +1,18 @@
+Analisador léxico -Tem a função de identificar quais os palavras possíveis na linguagem, fazer transições de estados
+de acordo com os caracteres digitados e identificar o tipo do token(palavra) 
+
+
+IDENTIFICADORES
+(a..z) => (A..Z|0..9|a..z)*
+
+NÚMEROS
+(0..9)+
+
+PONTUAÇÃO
+;
+
+OP_REL
+> | >= | < | <= | == | !=
+
+OP_ATR
+=

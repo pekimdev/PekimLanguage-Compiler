@@ -1,0 +1,17 @@
+{
+  "name": "peklanguage",
+  "version": "1.0.0",
+  "main": "src/main.js",
+  "scripts": {
+    "antlr4": "antlr4 -Dlanguage=JavaScript pekLang.g4 -o src/parser"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.8.7"
+  },
+  "dependencies": {
+    "antlr4": "4.7.1"
+  }
+}
