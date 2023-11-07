@@ -20,33 +20,6 @@ pekLangListener.prototype.exitProg = function(ctx) {
 };
 
 
-// Enter a parse tree produced by pekLangParser#declaration.
-pekLangListener.prototype.enterDeclaration = function(ctx) {
-};
-
-// Exit a parse tree produced by pekLangParser#declaration.
-pekLangListener.prototype.exitDeclaration = function(ctx) {
-};
-
-
-// Enter a parse tree produced by pekLangParser#declarevar.
-pekLangListener.prototype.enterDeclarevar = function(ctx) {
-};
-
-// Exit a parse tree produced by pekLangParser#declarevar.
-pekLangListener.prototype.exitDeclarevar = function(ctx) {
-};
-
-
-// Enter a parse tree produced by pekLangParser#type.
-pekLangListener.prototype.enterType = function(ctx) {
-};
-
-// Exit a parse tree produced by pekLangParser#type.
-pekLangListener.prototype.exitType = function(ctx) {
-};
-
-
 // Enter a parse tree produced by pekLangParser#bloco.
 pekLangListener.prototype.enterBloco = function(ctx) {
 };
@@ -89,6 +62,15 @@ pekLangListener.prototype.enterAttrcmd = function(ctx) {
 
 // Exit a parse tree produced by pekLangParser#attrcmd.
 pekLangListener.prototype.exitAttrcmd = function(ctx) {
+};
+
+
+// Enter a parse tree produced by pekLangParser#decisioncmd.
+pekLangListener.prototype.enterDecisioncmd = function(ctx) {
+};
+
+// Exit a parse tree produced by pekLangParser#decisioncmd.
+pekLangListener.prototype.exitDecisioncmd = function(ctx) {
 };
 
 

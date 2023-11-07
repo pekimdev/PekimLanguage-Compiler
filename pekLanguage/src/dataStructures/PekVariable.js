@@ -30,6 +30,10 @@ class PekVariable extends PekSymbol {
   toString() {
     return `PekVariable [name = ${this.name}, type = ${this.type}, value = ${this.value}]`;
   }
+
+  generateJavaScriptCode() {
+    return `let ${super.name}`;
+  }
 }
 
 exports.NUMBER = NUMBER;

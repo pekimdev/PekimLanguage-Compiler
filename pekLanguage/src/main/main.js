@@ -1,7 +1,7 @@
 const antlr4 = require("antlr4");
 
-const { pekLangLexer } = require("../parser/pekLangLexer");
-const { pekLangParser } = require("../parser/pekLangParser");
+const { pekLangLexer } = require("../parser/pekLangLexer.js");
+const { pekLangParser } = require("../parser/pekLangParser.js");
 
 function main() {
   try {
@@ -18,7 +18,7 @@ function main() {
 
     console.log("Compilation Successful");
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
   }
 }
 
