@@ -1,4 +1,4 @@
-class PekSymbol {
+class PekFunction {
   constructor(name) {
     this.name = name;
   }
@@ -12,7 +12,7 @@ class PekSymbol {
   }
 
   toString() {
-    return `PekSymbol [name = ${this.name}]`;
+    return `PekFunction [name = ${this.name}]`;
   }
 
   generateJavaScriptCode() {
@@ -20,4 +20,4 @@ class PekSymbol {
   }
 }
 
-exports.PekSymbol = PekSymbol;
+exports.PekFunction = PekFunction;

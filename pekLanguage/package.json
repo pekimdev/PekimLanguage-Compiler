@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "src/main.js",
   "scripts": {
-    "antlr4": "antlr4 -Dlanguage=JavaScript pekLang.g4 -o src/parser"
+    "antlr4": "antlr4 -Dlanguage=JavaScript pekLang.g4 -o src/parser",
+    "compile": "cd src/main; node main.js; node CodeGenerated.js"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +13,7 @@
     "@types/node": "^20.8.7"
   },
   "dependencies": {
-    "antlr4": "4.7.1"
+    "antlr4": "4.7.1",
+    "readline-sync": "^1.4.10"
   }
 }

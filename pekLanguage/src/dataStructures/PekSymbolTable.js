@@ -11,6 +11,10 @@ class PekSymbolTable {
     return this.map.get(symbolName);
   }
 
+  removeSymbol(symbolName) {
+    return this.map.delete(symbolName);
+  }
+
   exists(symbolName) {
     return this.map.get(symbolName) != null;
   }

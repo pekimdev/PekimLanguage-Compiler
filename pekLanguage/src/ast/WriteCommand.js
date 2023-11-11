@@ -5,5 +5,9 @@ class WriteCommand extends AbstractCommand {
     super();
     this.id = id;
   }
+
+  generateJavaScriptCode() {
+    return `console.log(${this.id});\n`;
+  }
 }
 exports.WriteCommand = WriteCommand;

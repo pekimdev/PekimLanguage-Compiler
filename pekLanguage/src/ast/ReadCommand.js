@@ -8,7 +8,7 @@ class ReadCommand extends AbstractCommand {
   }
 
   generateJavaScriptCode() {
-    return (this.id = `read(${this.id});`);
+    return (this.id = `${this.id} = readline.prompt();\n`);
   }
 
   toString() {

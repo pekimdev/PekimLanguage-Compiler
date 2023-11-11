@@ -1,0 +1,14 @@
+GABRIEL
+
+saudacao = "";
+
+fun hello(who){
+
+ler(saudacao)
+
+escrever(saudacao + ", " + who);
+
+}
+executar hello("Pekim");
+
+PEKIM

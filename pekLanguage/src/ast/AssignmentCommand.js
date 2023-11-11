@@ -8,7 +8,12 @@ class AssignmentCommand extends AbstractCommand {
   }
 
   generateJavaScriptCode() {
-    return `let ${this.id} = ${this.expr}`;
+    if (this.expr == "Verdadeiro") {
+      this.expr = true;
+    } else if (this.expr == "Falso") {
+      this.expr = false;
+    }
+    return `${this.id} = ${this.expr};`;
   }
 }
 

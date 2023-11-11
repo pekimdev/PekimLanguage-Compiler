@@ -3,6 +3,8 @@ const { PekSymbol } = require("./PekSymbol.js");
 
 const NUMBER = 0;
 const STRING = 1;
+const BOOLEAN = 2;
+const ARRAY = 3;
 
 class PekVariable extends PekSymbol {
   constructor(name, type, value) {
@@ -30,12 +32,10 @@ class PekVariable extends PekSymbol {
   toString() {
     return `PekVariable [name = ${this.name}, type = ${this.type}, value = ${this.value}]`;
   }
-
-  generateJavaScriptCode() {
-    return `let ${super.name}`;
-  }
 }
 
 exports.NUMBER = NUMBER;
 exports.STRING = STRING;
+exports.BOOLEAN = BOOLEAN;
+exports.ARRAY = ARRAY;
 exports.PekVariable = PekVariable;

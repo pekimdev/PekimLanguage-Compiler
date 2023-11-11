@@ -14,9 +14,9 @@ class DecisionCommand extends AbstractCommand {
     for (let cmd of this.trueList) {
       str += `${cmd.generateJavaScriptCode()}`;
     }
-    str += "}";
+    str += "}\n";
     if (this.falseList.length > 0) {
-      str += `else {`;
+      str += `else {\n`;
       for (let cmd of this.falseList) {
         str += `${cmd.generateJavaScriptCode()}`;
       }
