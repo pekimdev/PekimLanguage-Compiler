@@ -5,6 +5,7 @@ const NUMBER = 0;
 const STRING = 1;
 const BOOLEAN = 2;
 const ARRAY = 3;
+const FUNCTION = 4;
 
 class PekVariable extends PekSymbol {
   constructor(name, type, value) {
@@ -38,4 +39,5 @@ exports.NUMBER = NUMBER;
 exports.STRING = STRING;
 exports.BOOLEAN = BOOLEAN;
 exports.ARRAY = ARRAY;
+exports.FUNCTION = FUNCTION;
 exports.PekVariable = PekVariable;

@@ -1,7 +1,7 @@
 grammar pekLang;
 
 @header {
-      const {STRING, NUMBER, BOOLEAN, ARRAY} = require("../dataStructures/PekVariable.js")
+      const {STRING, NUMBER, BOOLEAN, ARRAY, FUNCTION} = require("../dataStructures/PekVariable.js")
       const { PekSymbol } = require("../dataStructures/PekSymbol.js");
       const { PekVariable } = require("../dataStructures/PekVariable.js");
       const { PekSymbolTable } = require("../dataStructures/PekSymbolTable.js");
@@ -20,6 +20,7 @@ grammar pekLang;
       const { DecisionCommand } = require("../ast/DecisionCommand.js");
       const { FunctionCommand } = require("../ast/FunctionCommand.js");
       const { FunExecCommand } = require("../ast/FunExecCommand.js");
+      const { ReturnCommand } = require("../ast/ReturnCommand.js");
 }
 
 @members {
@@ -28,17 +29,19 @@ grammar pekLang;
       let paramTable = new PekParamTable();
       let program = new PekProgram();
       let stack = new Stack();
+      let line = 0;
+      let column = 0;
 
       function verificationID(id){
             if(!symbolTable.exists(id)){
-                  throw new PekSemanticError(`Symbol '${id}' not declared.`)
+                  throw new PekSemanticError(`Símbolo '${id}' não declarado.`, line, column)
             }
       }
 
 
       function verificationFunction(funName){
             if(!functionTable.exists(funName)){
-                  throw new PekSemanticError(`Essa função executada não existe.`)
+                  throw new PekSemanticError(`Essa função executada não existe.`, line, column)
             }
       }
 
@@ -76,6 +79,7 @@ cmd   : readcmd
       | decisioncmd
       | funcmd
       | funexec
+      | returncmd
       ;
 
 readcmd : 'ler' AP 
@@ -111,8 +115,7 @@ attrcmd :  ID {
 
          
 
-ATTR { exprContent = "";   
-}
+ATTR { exprContent = "" }
 expr {
 
       let firstChar = exprContent[0];
@@ -128,8 +131,11 @@ expr {
             _type = ARRAY;
       }
 
-      else {
+      else if(exprContent == "Verdadeiro" || exprContent == "Falso"){
             _type = BOOLEAN;
+      }
+      else {
+            _type = FUNCTION
       }
 
       let symbol = new PekVariable(_varName, _type, _varValue);
@@ -138,7 +144,7 @@ expr {
       if(!symbolTable.exists(_varName)){
             symbolTable.addSymbol(symbol)
       } else {
-      throw new PekSemanticError(`Variável '${_varName}' já declarada.`)
+      throw new PekSemanticError(`Variável '${_varName}' já declarada.`, line, colum)
       }
 }
 (SemiColon)?
@@ -196,7 +202,7 @@ decisioncmd : 'se' AP
 funcmd : 'fun' ID {
       let funName = $ID.text;
       if (functionTable.exists(funName)){
-            throw new PekSemanticError(`A função ${funName} já existe.`)
+            throw new PekSemanticError(`A função ${funName} já existe.`, line, column);
       }
       }
       AP {
@@ -204,6 +210,9 @@ funcmd : 'fun' ID {
       } 
       (params)?
       FP 
+      { let fun = new PekFun(funName, paramsList);
+            functionTable.addFun(fun);
+      }
       AC
       { 
             let currentThread = new Array(); 
@@ -219,10 +228,7 @@ funcmd : 'fun' ID {
        
        let cmd = new FunctionCommand(funName, paramsList, commandsList);
             stack.peek().push(cmd);
-
-       let fun = new PekFun(funName, paramsList);
-            functionTable.addFun(fun);
-
+      
        for(param of paramsList) {
             paramTable.removeParam(param);
        }
@@ -230,7 +236,7 @@ funcmd : 'fun' ID {
        ;
 
 
-funexec : 'executar ' ID {
+funexec : ID {
             let funName = $ID.text
             verificationFunction(funName);
 }
@@ -246,7 +252,7 @@ funexec : 'executar ' ID {
           FP
           { 
             if (paramsListExec.length !== params.length){
-                        throw new PekSemanticError("Quantidade de parâmetros incongruentes a função.")
+                  throw new PekSemanticError("Quantidade de parâmetros incongruentes a função.", line, column);
                         
                   }
 
@@ -256,12 +262,22 @@ funexec : 'executar ' ID {
           (SemiColon)?
       ;
 
-array : '[' (expr (COMMA expr)*)? ']'
-      ;
-
 paramsExec : expr { paramsListExec.push($expr.text) } 
             (COMMA expr { paramsListExec.push($expr.text) })*
            ;
+
+
+returncmd : 'retornar' {
+       exprContent = "";
+      }
+      expr {
+       let cmd = new ReturnCommand($expr.text);
+         stack.peek().push(cmd); 
+      }
+      (SemiColon)?
+      
+          ;
+
 
 expr  : term (OP { exprContent += $OP.text; }
         term)*
@@ -277,6 +293,10 @@ term  : ID {
       | STRING { exprContent += $STRING.text }
       | BOOLEAN { exprContent += $BOOLEAN.text }
       | array { exprContent = $array.text }
+      | funexec { exprContent = $funexec.text
+            stack.peek().pop();  // Se execução for considerada uma expr, então removerá o comando de execução gerado fora da expressão.
+            }
+            
       ;
 
 params : param (COMMA param)*
@@ -286,11 +306,14 @@ param : ID {
       param = new PekParam($ID.text);
 
       if(paramTable.exists($ID.text)){
-            throw new PekSemanticError("Parâmetro já existente nessa função.");
+            throw new PekSemanticError("Parâmetro já existente nessa função.", line, column);
       }
       paramTable.addParam(param);
       paramsList.push($ID.text); 
       }
+      ;
+
+array : '[' (expr (COMMA expr)*)? ']'
       ;
 
 AP  : '('
@@ -334,4 +357,11 @@ SemiColon : ';'
 COMMA : ','
       ;
 
-WS : (' ' | '\t' | '\n' | '\r') -> skip;
+WS : (SPACE | '\t' | BREAKLINE | '\r') -> skip
+   ;
+
+SPACE : ' ' { column += 1 }
+      ;
+
+BREAKLINE : '\n' { line += 1; colum = 0 }
+          ;

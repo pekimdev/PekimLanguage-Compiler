@@ -1,6 +1,6 @@
 class PekSemanticError extends Error {
-  constructor(msg) {
-    super(`Semantic Error - ${msg}`);
+  constructor(msg, line, column) {
+    super(`Semantic Error - ${msg}, ${line}:${column}`);
   }
 }
 

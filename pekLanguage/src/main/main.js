@@ -32,7 +32,7 @@ function main() {
 
     parser.prog();
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
     fs.unlink("./CodeGenerated.js", (err) => {
       if (err) {
         console.log(" ");

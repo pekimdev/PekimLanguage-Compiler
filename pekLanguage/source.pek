@@ -1,14 +1,17 @@
 GABRIEL
 
-saudacao = "";
-
-fun hello(who){
-
-ler(saudacao)
-
-escrever(saudacao + ", " + who);
-
+fun fib (n){
+  se (n < 2) {
+   retornar n
+  } senao {
+    retornar fib(n - 1) + fib(n - 2)
+  }
 }
-executar hello("Pekim");
+
+result = "";
+
+ler(result)
+
+escrever(fib(result));
 
 PEKIM
