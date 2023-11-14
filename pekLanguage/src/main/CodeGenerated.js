@@ -10,7 +10,7 @@ console.log("Você tem muitos items, deseja remover algum item? Digite 'sim' ou 
 resposta = readline.prompt();
 if (resposta=="sim") {
 itemRemovido = items.pop();
-console.log("Item "+itemRemovido);
+console.log(itemRemovido+" Foi removido");
 feira(items);
 }
 else {

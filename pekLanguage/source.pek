@@ -12,7 +12,7 @@ fun feira(items){
 
     se (resposta == "sim") {
       itemRemovido = items.remover();
-      escrever(itemRemovido + " Foi removido");
+      escrever(itemRemovido + " foi removido(a)!");
         feira(items);
     }
     senao {

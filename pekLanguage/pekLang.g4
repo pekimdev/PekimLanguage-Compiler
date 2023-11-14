@@ -74,7 +74,6 @@ prog  : 'GABRIEL' bloco 'PEKIM' (SemiColon)?
       { 
       program.setVarTable(symbolTable);
       program.setCommands(stack.pop());
-      showCommands();
       generateCode();
       }
       ;

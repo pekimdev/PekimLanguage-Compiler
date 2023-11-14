@@ -167,7 +167,7 @@ fun hello(){
 }
 ```
 
-e esses cmd podendo ser comando de atribuição, condição, função, execução de função, leitura, escrita e retorno.
+e esses cmd podendo ser comando de atribuição, condição, função, execução de função, leitura, escrita, retorno e acesso para manipulações de arrays.
 
 ```
 cmd   : readcmd
@@ -177,6 +177,7 @@ cmd   : readcmd
       | funcmd
       | funexec
       | returncmd
+      | accesscmd
       ;
 ```
 

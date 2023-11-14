@@ -490,7 +490,6 @@ pekLangParser.prototype.prog = function () {
 
     program.setVarTable(symbolTable);
     program.setCommands(stack.pop());
-    showCommands();
     generateCode();
   } catch (re) {
     if (re instanceof antlr4.error.RecognitionException) {
