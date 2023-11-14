@@ -1,4 +1,5 @@
 const { AbstractCommand } = require("./AbstractCommand");
+const { AccessCommand } = require("./AccessCommand");
 
 class AssignmentCommand extends AbstractCommand {
   constructor(id, expr) {
@@ -13,7 +14,17 @@ class AssignmentCommand extends AbstractCommand {
     } else if (this.expr == "Falso") {
       this.expr = false;
     }
-    return `${this.id} = ${this.expr};`;
+    if (typeof this.expr == "object" && this.expr instanceof AccessCommand) {
+      if (this.expr.i == `${this.expr.text}.length - 1`) {
+        return `${this.id} = ${this.expr.text}[${this.expr.i}]\n`;
+      } else if (this.expr.i == "last") {
+        return `${this.id} = ${this.expr.text}[${this.expr.expr}]\n`;
+      }
+
+      return `${this.id} = ${this.expr.i};\n`;
+    }
+
+    return `${this.id} = ${this.expr};\n`;
   }
 }
 

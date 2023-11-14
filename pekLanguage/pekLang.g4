@@ -21,6 +21,7 @@ grammar pekLang;
       const { FunctionCommand } = require("../ast/FunctionCommand.js");
       const { FunExecCommand } = require("../ast/FunExecCommand.js");
       const { ReturnCommand } = require("../ast/ReturnCommand.js");
+      const { AccessCommand } = require("../ast/AccessCommand.js");
 }
 
 @members {
@@ -29,19 +30,30 @@ grammar pekLang;
       let paramTable = new PekParamTable();
       let program = new PekProgram();
       let stack = new Stack();
-      let line = 0;
-      let column = 0;
 
       function verificationID(id){
             if(!symbolTable.exists(id)){
-                  throw new PekSemanticError(`Símbolo '${id}' não declarado.`, line, column)
+                  throw new PekSemanticError(`Símbolo '${id}' não declarado.`)
+            }
+      }
+
+      function verificationTypeID(id){
+            let symbol = symbolTable.getSymbol(id);
+
+            if(symbolTable.exists(id)){
+
+            let type = symbol.getType();
+
+            if(type !== ARRAY && type !== STRING) {
+                  throw new PekSemanticError(`Símbolo '${id}' incongruente`)
+            }
             }
       }
 
 
       function verificationFunction(funName){
             if(!functionTable.exists(funName)){
-                  throw new PekSemanticError(`Essa função executada não existe.`, line, column)
+                  throw new PekSemanticError(`Essa função executada não existe.`)
             }
       }
 
@@ -80,6 +92,7 @@ cmd   : readcmd
       | funcmd
       | funexec
       | returncmd
+      | accesscmd
       ;
 
 readcmd : 'ler' AP 
@@ -97,10 +110,10 @@ readcmd : 'ler' AP
 writecmd : 'escrever' AP {
             exprContent = "";
             }
-            expr { writeID = $expr.text; }
+            expr
              FP 
             {
-                  let cmd = new WriteCommand(writeID);
+                  let cmd = new WriteCommand(exprContent);
                   stack.peek().push(cmd);
             }
             (SemiColon)?
@@ -140,11 +153,16 @@ expr {
 
       let symbol = new PekVariable(_varName, _type, _varValue);
 
+      if(_type == NUMBER && exprContent.length > 5){
+            exprContent = `BigInt(${exprContent})`;
+      }
+
 
       if(!symbolTable.exists(_varName)){
             symbolTable.addSymbol(symbol)
       } else {
-      throw new PekSemanticError(`Variável '${_varName}' já declarada.`, line, colum)
+          symbolTable.removeSymbol(_varName)
+            symbolTable.addSymbol(symbol)
       }
 }
 (SemiColon)?
@@ -181,7 +199,44 @@ decisioncmd : 'se' AP
       { 
             let trueList = new Array();
             trueList = stack.pop();
+             let cmd = new DecisionCommand(exprDecision, "", trueList, [], []);
+                  stack.peek().push(cmd);
       }
+
+      ('senao se' AP
+      (ID | NUMBER | STRING) {exprSecondDecision = this._input.LT(-1).text;}
+            OPREL { exprSecondDecision += $OPREL.text }
+            (ID | NUMBER | STRING | BOOLEAN) 
+            {
+            if(this._input.LT(-1).text == 'Verdadeiro'){
+                  exprSecondDecision += true ;}
+            else if(this._input.LT(-1).text == 'Falso'){
+                  exprSecondDecision += false;
+            }
+            else {
+                  exprSecondDecision += this._input.LT(-1).text;
+            }
+            }
+            FP 
+            {
+               cmd.setSecondDecision(exprSecondDecision);
+            }
+        AC {
+            { let currentThread = new Array(); 
+            stack.push(currentThread);
+            }
+           }
+           (cmd)+
+       FC
+       {
+            let elseIfList = new Array();
+            elseIfList = stack.pop();
+            cmd.setElseIfList(elseIfList);
+            stack.peek().pop();
+            stack.peek().push(cmd);
+       }
+
+      )?
 
       ('senao' 
       AC 
@@ -193,7 +248,8 @@ decisioncmd : 'se' AP
       {
       let falseList = new Array();
       falseList = stack.pop();
-      let cmd = new DecisionCommand(exprDecision, trueList, falseList);
+      cmd.setFalseList(falseList);
+      stack.peek().pop();
       stack.peek().push(cmd);
       }
       )?
@@ -202,7 +258,7 @@ decisioncmd : 'se' AP
 funcmd : 'fun' ID {
       let funName = $ID.text;
       if (functionTable.exists(funName)){
-            throw new PekSemanticError(`A função ${funName} já existe.`, line, column);
+            throw new PekSemanticError(`A função ${funName} já existe.`);
       }
       }
       AP {
@@ -252,7 +308,7 @@ funexec : ID {
           FP
           { 
             if (paramsListExec.length !== params.length){
-                  throw new PekSemanticError("Quantidade de parâmetros incongruentes a função.", line, column);
+                  throw new PekSemanticError("Quantidade de parâmetros incongruentes a função.");
                         
                   }
 
@@ -270,13 +326,59 @@ paramsExec : expr { paramsListExec.push($expr.text) }
 returncmd : 'retornar' {
        exprContent = "";
       }
-      expr {
+      (expr {
        let cmd = new ReturnCommand($expr.text);
          stack.peek().push(cmd); 
-      }
+      })?
       (SemiColon)?
       
           ;
+
+accesscmd : ID {
+      if(!paramTable.exists($ID.text)){
+      verificationID($ID.text); 
+      }
+      let i = "";
+} 
+      {
+       let text = $ID.text;
+      }
+      ('[' {
+            exprContent = "";
+      } expr (OP expr)* {
+            let cmd = new AccessCommand(text, 'last', exprContent) 
+            stack.peek().push(cmd)
+            }
+      ']' | '.ultimo' 
+      
+      { let commandLastIndex = new AccessCommand(text, `${text}.length - 1`)
+            stack.peek().push(commandLastIndex)
+      }
+      | '.tamanho'
+
+      { 
+        let commandLength = new AccessCommand(text, `${text}.length`);
+            stack.peek().push(commandLength);
+      }
+
+      | '.adicionar' AP {
+            exprContent = "";
+      } expr (COMMA { exprContent += $COMMA.text } expr)* FP 
+
+      { let commandPush = new AccessCommand(text, `${text}.push(${exprContent})`, exprContent);
+            stack.peek().push(commandPush);
+      }
+
+      | '.remover' AP FP {
+            let commandPop = new AccessCommand(text, `${text}.pop()`)
+            stack.peek().push(commandPop);
+      }
+
+      
+      )
+
+      (SemiColon)?
+      ;
 
 
 expr  : term (OP { exprContent += $OP.text; }
@@ -296,6 +398,7 @@ term  : ID {
       | funexec { exprContent = $funexec.text
             stack.peek().pop();  // Se execução for considerada uma expr, então removerá o comando de execução gerado fora da expressão.
             }
+      | accesscmd { exprContent = stack.peek().pop()}
             
       ;
 
@@ -306,7 +409,7 @@ param : ID {
       param = new PekParam($ID.text);
 
       if(paramTable.exists($ID.text)){
-            throw new PekSemanticError("Parâmetro já existente nessa função.", line, column);
+            throw new PekSemanticError("Parâmetro já existente nessa função.");
       }
       paramTable.addParam(param);
       paramsList.push($ID.text); 
@@ -357,11 +460,5 @@ SemiColon : ';'
 COMMA : ','
       ;
 
-WS : (SPACE | '\t' | BREAKLINE | '\r') -> skip
+WS : (' ' | '\t' | '\n'| '\r') -> skip
    ;
-
-SPACE : ' ' { column += 1 }
-      ;
-
-BREAKLINE : '\n' { line += 1; colum = 0 }
-          ;

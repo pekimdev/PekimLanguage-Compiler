@@ -110,6 +110,15 @@ pekLangListener.prototype.exitReturncmd = function(ctx) {
 };
 
 
+// Enter a parse tree produced by pekLangParser#accesscmd.
+pekLangListener.prototype.enterAccesscmd = function(ctx) {
+};
+
+// Exit a parse tree produced by pekLangParser#accesscmd.
+pekLangListener.prototype.exitAccesscmd = function(ctx) {
+};
+
+
 // Enter a parse tree produced by pekLangParser#expr.
 pekLangListener.prototype.enterExpr = function(ctx) {
 };

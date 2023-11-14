@@ -1,17 +1,56 @@
 GABRIEL
 
-fun fib (n){
-  se (n < 2) {
-   retornar n
-  } senao {
-    retornar fib(n - 1) + fib(n - 2)
+fun feira(items){
+
+  resposta = "";
+
+  quantidade = items.tamanho;
+
+  se (quantidade > 10){
+    escrever("Você tem muitos items, deseja remover algum item? Digite 'sim' ou 'não'");
+    ler(resposta)
+
+    se (resposta == "sim") {
+      items = items.remover();
+        feira(items);
+    }
+    senao {
+       escrever("Ok, muito obrigado pela sua preferência! Sua lista de compras tiveram os seguintes items: " + items);
+      retornar;
+    }
+
+  }
+
+  senao {
+    ultimoItem = items.ultimo;
+    escrever(ultimoItem + " é seu último item, deseja adicionar mais? Digite 'sim' ou 'não'.")
+    ler(resposta)
+
+    se (resposta == "sim"){
+      escrever("O que você deseja adicionar?");
+
+      item = "";
+
+      ler(item);
+
+      itemIndex = items.adicionar(item);
+
+      itemAdicionado = items[itemIndex - 1]
+
+      escrever(itemAdicionado + " Adicionado(a)!")
+
+      feira(items);
+    }
+
+    senao {
+      escrever("Ok, muito obrigado pela sua preferência! Sua lista de compras tiveram os seguintes items: " + items);
+      retornar;
+    }
+
+
   }
 }
 
-result = "";
+feira(["Maça", "Pêssego", "Melancia", "Abacaxi", "Frango", "Uva"]);
 
-ler(result)
-
-escrever(fib(result));
-
-PEKIM
+PEKIM;
