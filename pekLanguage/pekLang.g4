@@ -74,6 +74,7 @@ prog  : 'GABRIEL' bloco 'PEKIM' (SemiColon)?
       { 
       program.setVarTable(symbolTable);
       program.setCommands(stack.pop());
+      showCommands();
       generateCode();
       }
       ;
@@ -189,7 +190,7 @@ decisioncmd : 'se' AP
                   exprDecision += this._input.LT(-1).text;
             }
             }
-            FP 
+            FP { let cmd = new DecisionCommand(exprDecision, "", [], [], []); }
             AC
             { let currentThread = new Array(); 
             stack.push(currentThread);
@@ -199,7 +200,7 @@ decisioncmd : 'se' AP
       { 
             let trueList = new Array();
             trueList = stack.pop();
-             let cmd = new DecisionCommand(exprDecision, "", trueList, [], []);
+             cmd.setTrueList(trueList);
                   stack.peek().push(cmd);
       }
 
@@ -217,9 +218,8 @@ decisioncmd : 'se' AP
                   exprSecondDecision += this._input.LT(-1).text;
             }
             }
-            FP 
-            {
-               cmd.setSecondDecision(exprSecondDecision);
+            FP {
+                   cmd.setSecondDecision(exprSecondDecision);
             }
         AC {
             { let currentThread = new Array(); 

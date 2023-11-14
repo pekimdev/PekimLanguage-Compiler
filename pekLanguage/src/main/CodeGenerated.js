@@ -5,11 +5,12 @@ resposta = "";
 
 quantidade = items.length;
 
-if (resposta=="sim") {
+if (quantidade>10) {
 console.log("Você tem muitos items, deseja remover algum item? Digite 'sim' ou 'não'");
 resposta = readline.prompt();
 if (resposta=="sim") {
-items = items.pop();
+itemRemovido = items.pop();
+console.log("Item "+itemRemovido);
 feira(items);
 }
 else {
@@ -35,5 +36,5 @@ console.log("Ok, muito obrigado pela sua preferência! Sua lista de compras tive
 }
 
 }
-feira(["Maça","Pêssego","Melancia","Abacaxi","Frango","Uva"]);
+feira(["Maça","Pêssego","Melancia","Abacaxi","Frango","Uva","Tomate","Morango","Banana"]);
 

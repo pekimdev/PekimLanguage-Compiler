@@ -11,7 +11,8 @@ fun feira(items){
     ler(resposta)
 
     se (resposta == "sim") {
-      items = items.remover();
+      itemRemovido = items.remover();
+      escrever(itemRemovido + " Foi removido");
         feira(items);
     }
     senao {
@@ -51,6 +52,6 @@ fun feira(items){
   }
 }
 
-feira(["Maça", "Pêssego", "Melancia", "Abacaxi", "Frango", "Uva"]);
+feira(["Maça", "Pêssego", "Melancia", "Abacaxi", "Frango", "Uva", "Tomate", "Morango", "Banana"]);
 
 PEKIM;

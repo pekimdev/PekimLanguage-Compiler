@@ -37,6 +37,10 @@ class DecisionCommand extends AbstractCommand {
     return str.toString();
   }
 
+  setTrueList(tl) {
+    this.trueList = tl;
+  }
+
   setElseIfList(eil) {
     this.elseIfList = eil;
   }
@@ -47,6 +51,10 @@ class DecisionCommand extends AbstractCommand {
 
   setSecondDecision(secondCondition) {
     this.secondCondition = secondCondition;
+  }
+
+  setExprDecision(exprDecision) {
+    this.condition = exprDecision;
   }
 }
 
